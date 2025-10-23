@@ -22,6 +22,25 @@ int init_device(){
 		perror("open buttons");
 		return -1;
 	}
+	g_maxfd=(g_maxfd<g_buttonfd) ? g_butttonfd : g_maxfd;
+	//加入集合用于监听
+	FD_SET(g_buttonfd,&READSET);
+	printf("初始化按键成功\n");
+	//初始化串口
+	g_serialfd=open("/dev/s3c2410_serial1",O_RDONLY);
+	if(g_serialfd==-1){
+		perror("open serial");
+		return -1;
+	}
+	if(init_serial()==-1){
+		printf("初始化串口失败\n");
+		return -1;
+	}
+	g_maxfd=(g_maxfd<g_serialfd) ? g_serialfd : g_maxfd;
+	//加入集合中用于监听 
+	FD_SET(g_serialfd,&READSET);
+	printf("初始化串口成功\n");
+
 
 #endif
 	
